@@ -1,10 +1,10 @@
-#summary One-sentence summary of this page.
+#summary This page is composed of steps to use this software!
 
 = Introduction =
 
 The entire program is actually really simple, being to scan the local connection.
 
-steps:
+steps: \n
 *Step 1:* Run Program.
 *step 2:* Enter Password, by default, it is "Password"
 *step 3:* Allow Administrative Privileges.
@@ -14,5 +14,3 @@ steps:
 *step 7:* You can type "y", or "n" depending on your choice.
 *step 8:* Open the txt files for info!
 _THE END!_
-
-
