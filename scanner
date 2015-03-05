@@ -1,0 +1,194 @@
+@echo off
+cd %cd%
+cls 
+rem this will filter out non-programmer robbers, and give a small, 'shield' to people I don't give permission to use! 
+title Idiot-Filter Page!
+
+@echo off
+set counter=5
+:CREDS
+cls
+if %counter% equ 0 goto :LOCKOUT
+if %counter% lss 5 echo Password incorrect, %counter% attempts left
+set /p pw=Enter password:
+
+if %pw%==Password goto :ALLOK
+
+goto :WRONG
+
+:WRONG
+set /a counter-=1
+goto :CREDS
+
+:ALLOK
+echo Welcome!
+goto :1234
+
+:LOCKOUT
+echo ACCOUNT LOCKED OUT for 5 minutes
+timeout /t 300 /nobreak >nul
+set counter=5
+goto :CREDS
+
+exit
+:1234
+
+:: BatchGotAdmin
+:-------------------------------------
+REM  --> Check for permissions
+>nul 2>&1 "%SYSTEMROOT%\system32\cacls.exe" "%SYSTEMROOT%\system32\config\system"
+
+REM --> If error flag set, we do not have admin.
+if '%errorlevel%' NEQ '0' (
+    echo Requesting administrative privileges...
+    goto UACPrompt
+) else ( goto gotAdmin )
+
+:UACPrompt
+    echo Set UAC = CreateObject^("Shell.Application"^) > "%temp%\getadmin.vbs"
+    set params = %*:"=""
+    echo UAC.ShellExecute "cmd.exe", "/c %~s0 %params%", "", "runas", 1 >> "%temp%\getadmin.vbs"
+
+    "%temp%\getadmin.vbs"
+    del "%temp%\getadmin.vbs"
+    exit /B
+
+:gotAdmin
+    pushd "%CD%"
+    CD /D "%~dp0"
+:--------------------------------------
+color 0F
+
+
+
+:ip_retrieve
+@echo off
+set ip_address_string="IP Address"
+rem comment the following line when NOT using Windows 7 (with adding "rem")
+set ip_address_string="IPv4 Address"
+echo Network Connection Test
+for /f "usebackq tokens=2 delims=:" %%f in (`ipconfig ^| findstr /c:%ip_address_string%`) do (
+echo Your IP Address is: %%f
+set myip=%%f
+)
+
+
+title Network Scanner		-%myip%-%time%-%date%-
+
+
+if exist ~ip03.txt del ~ip03.txt
+if exist ~names.txt del ~names.txt
+if exist ~replies.txt del ~replies.txt
+if exist ~ipconfig.txt del ~ipconfig.txt
+if exist ~ip02.txt del ~ip02.txt
+if exist ~IP.txt del ~IP.txt
+if exist ~iplist.txt del ~iplist.txt
+if exist report.txt del report.txt
+if exist ~netbios.txt del ~netbios.txt
+
+echo The Vex, Inc.
+echo.
+set /p userdata=Enter some notes for this location: 
+ipconfig /all > ~ipconfig.txt
+echo FINDING HOST IP
+find "DHCP Server" ~ipconfig.txt >> ~IP.txt
+for /f "tokens=1-2 delims=:" %%i in (~IP.txt) do echo %%j> ~ip02.txt
+for /f "tokens=1-3 delims=." %%i in (~ip02.txt) do echo %%i.%%j.%%k> ~ip03.txt
+for /f "tokens=1-2 delims= " %%i in (~ip03.txt) do set ip=%%i
+
+>> report.txt echo ************************************************************
+>> report.txt echo ************************************************************
+>> report.txt echo ************************************************************
+>> report.txt echo %userdata%???
+>> report.txt echo Scanned on:
+>> report.txt echo %date%
+>> report.txt echo %time%
+
+>> report.txt echo ************************************************************
+>> report.txt echo                     NETWORK STATISTICS
+>> report.txt echo ************************************************************
+>> report.txt type ~ipconfig.txt
+
+>> report.txt echo ************************************************************
+>> report.txt echo                           PING
+>> report.txt echo ************************************************************
+echo Scanning your network
+for /L %%x in (1,1,254) do echo %ip%.%%x & ping -n 1 -w 50 -i 6 %ip%.%%x | Find "Reply from %ip%.%%x" && echo %ip%.%%x>> ~replies.txt
+>> report.txt echo               Active computers on network
+>> report.txt type ~replies.txt
+>> iplist.txt type ~replies.txt
+
+>> report.txt echo ************************************************************
+
+>> report.txt echo ************************************************************
+>> report.txt echo 			    Netbios
+echo Scanning Active hosts...
+for /f %%x in (~replies.txt) do echo %%x >> report.txt & nbtstat -A %%x | find "Registered" >> report.txt
+
+>> report.txt echo ************************************************************
+>> report.txt echo 		   Host machine open ports
+netstat -an | find "LISTENING" >> report.txt
+
+>> report.txt echo ************************************************************
+>> report.txt echo                        Computer names
+find "<20>" report.txt >> ~netbios.txt
+for /f "tokens=1 delims= " %%i in (~netbios.txt)do echo %%i >> ~names.txt
+>> report.txt type ~names.txt
+
+:view
+echo.
+echo Would you like to view any of these computers?
+type ~names.txt
+set /p ans=       (y/n) 
+echo %ans%
+if %ans%==n goto cleanup
+if %ans%==V3X goto :VEX
+if %ans%==y goto :share
+cls
+goto :view
+
+:share
+echo.
+echo Which computer would you like to view?
+set /p cpu=
+start \\%cpu%
+goto view
+:cleanup
+>> report.txt echo ************************************************************
+>> report.txt echo ************************************************************
+>> report.txt echo ************************************************************
+>> report.txt echo.
+>> report.txt echo.
+>> report.txt echo.
+
+type report.txt >> Net_Scan_History.txt
+
+if exist ~names.txt del ~names.txt
+if exist ~iplist.txt del ~iplist.txt
+if exist ~ip02.txt del ~ip02.txt
+if exist ~replies.txt del ~replies.txt
+if exist ~ipconfig.txt del ~ipconfig.txt
+if exist ~ip03.txt del ~ip03.txt
+if exist ~IP.txt del ~IP.txt
+if exist ~netbios.txt del ~netbios.txt
+if exist report.txt del report.txt
+
+start Net_Scan_History.txt
+exit
+
+:VEX
+type ~replies.txt
+echo you are %myip%
+set /p computertarget=:
+shutdown -s -m \\%computertarget%
+pause
+
+if exist ~ip03.txt del ~ip03.txt
+if exist ~names.txt del ~names.txt
+if exist ~replies.txt del ~replies.txt
+if exist ~ipconfig.txt del ~ipconfig.txt
+if exist ~ip02.txt del ~ip02.txt
+if exist ~IP.txt del ~IP.txt
+if exist ~netbios.txt del ~netbios.txt
+
+exit
