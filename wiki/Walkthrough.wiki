@@ -4,9 +4,9 @@
 
 The entire program is actually really simple, being to scan the local connection.
 
-steps: \n
-*Step 1:* Run Program.
-*step 2:* Enter Password, by default, it is "Password"
+=steps: =
+==*Step 1:* Run Program.==
+===*step 2:* Enter Password, by default, it is "Password"===
 *step 3:* Allow Administrative Privileges.
 *step 4:* Repeat step 2.
 *step 5:* Enter title for document (in final report.)
