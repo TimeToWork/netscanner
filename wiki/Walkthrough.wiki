@@ -9,7 +9,7 @@ The entire program is actually really simple, being to scan the local connection
 ===*step 2:* Enter Password, by default, it is "Password"===
 ====*step 3:* Allow Administrative Privileges.====
 =====*step 4:* Repeat step 2.=====
-======*step 5:* Enter title for document (in final report.)======
+=====*step 5:* Enter title for document (in final report.)=====
 =======*step 6:* Press enter and wait! This can take from 1 minute to 3 minutes.=======
 *step 7:* You can type "y", or "n" depending on your choice.
 *step 8:* Open the txt files for info!
