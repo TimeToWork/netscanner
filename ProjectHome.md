@@ -1,0 +1,1 @@
+Scans 192.168.1.(1-255), to see what addresses are being used. also gives more in depth information about your machine and network.
